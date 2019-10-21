@@ -637,22 +637,26 @@ Recorder.addEventHandler(
   'contextMenu',
   'contextmenu',
   function(event) {
-    let myPort = browser.runtime.connect()
-    let tmpText = locatorBuilders.buildAll(event.target)
-    let tmpVal = bot.dom.getVisibleText(event.target)
-    let tmpTitle = goog.string.normalizeSpaces(event.target.ownerDocument.title)
-    myPort.onMessage.addListener(function(m) {
-      if (m.cmd.includes('Text')) {
-        record(m.cmd, tmpText, tmpVal)
-      } else if (m.cmd.includes('Title')) {
-        record(m.cmd, [[tmpTitle]], '')
-      } else if (m.cmd.includes('Value')) {
-        record(m.cmd, tmpText, event.target.value)
-      } else if (m.cmd === 'mouseOver') {
-        record('mouseOver', locatorBuilders.buildAll(event.target), '')
-      }
-      myPort.onMessage.removeListener(this)
-    })
+    record("contextMenu", locatorBuilders.buildAll(event.target), '');
+    
+    // let myPort = browser.runtime.connect()
+    // let tmpText = locatorBuilders.buildAll(event.target)
+    // let tmpVal = bot.dom.getVisibleText(event.target)
+    // let tmpTitle = goog.string.normalizeSpaces(event.target.ownerDocument.title)
+
+
+    // myPort.onMessage.addListener(function(m) {
+    //   if (m.cmd.includes('Text')) {
+    //     record(m.cmd, tmpText, tmpVal)
+    //   } else if (m.cmd.includes('Title')) {
+    //     record(m.cmd, [[tmpTitle]], '')
+    //   } else if (m.cmd.includes('Value')) {
+    //     record(m.cmd, tmpText, event.target.value)
+    //   } else if (m.cmd === 'mouseOver') {
+    //     record('mouseOver', locatorBuilders.buildAll(event.target), '')
+    //   }
+    //   myPort.onMessage.removeListener(this)
+    // })
   },
   true
 )
