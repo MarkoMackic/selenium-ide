@@ -23,6 +23,12 @@ export const TargetTypes = {
   REGION: 'region',
 }
 
+export function registerCommand(id, command) {
+  if (Commands.find(c => c[0] === command.command))
+    throw new Error('Unable to overwrite existing command')
+  Commands.push([id, command])
+}
+
 export const Commands = [
   [
     'addSelection',
@@ -270,7 +276,7 @@ export const Commands = [
         (e.g., 0,0 is the top left corner of the element) and are mostly used 
         to check effects that relay on them, for example the material ripple effect.`,
       target: ArgTypes.locator,
-      value: ArgTypes.coord,
+      value: { isOptional: true, ...ArgTypes.coord },
     },
   ],
   [
@@ -525,6 +531,7 @@ export const Commands = [
         the result of the provided conditional expression is true, it starts 
         the do loop over.  Otherwise it ends the loop.`,
       target: ArgTypes.conditionalExpression,
+      value: { isOptional: true, ...ArgTypes.loopLimit },
     },
   ],
   [
