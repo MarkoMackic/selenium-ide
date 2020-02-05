@@ -103,6 +103,8 @@ class PlaybackState {
     this.variables = new Variables()
     this.extCommand = new ExtCommand(WindowSession)
     this.browserDriver = new WebDriverExecutor()
+    this.originalCalledTest = undefined
+    this.playbackOptions = {}
 
     reaction(
       () => this.paused,
@@ -351,6 +353,7 @@ class PlaybackState {
       this.resetState()
       if (!this.currentRunningSuite) this.runId = uuidv4()
       this.currentRunningTest = test
+      this.originalCalledTest = test
       this.testsCount = 1
       let currentPlayingIndex = 0
       if (command && command instanceof Command) {
@@ -427,6 +430,7 @@ class PlaybackState {
         this.forceTestCaseFailure = false
         this.aborted = false
         this.currentRunningTest = UiState.selectedTest.test
+        this.originalCalledTest = UiState.selectedTest.test
         this.runningQueue = [command]
         this.isSingleCommandRunning = true
         this.play().then(() => {
@@ -476,6 +480,7 @@ class PlaybackState {
       this._testsToRun.shift()
     // pull the next test off the test queue for execution
     this.currentRunningTest = this._testsToRun.shift()
+    this.originalCalledTest = this.currentRunningTest
     this.runningQueue = this.currentRunningTest.commands.slice()
     this.clearStack()
     this.errors = 0
@@ -702,6 +707,7 @@ class PlaybackState {
   cleanupCurrentRunningVariables() {
     this.currentRunningTest = undefined
     this.currentRunningSuite = undefined
+    this.originalCalledTest = undefined
   }
 
   @action.bound
@@ -753,7 +759,7 @@ class PlaybackState {
   }
 
   @action.bound
-  callTestCase(_testCase) {
+  callTestCase(_testCase, playbackOptions) {
     let testCase = _testCase
     if (typeof testCase === 'string') {
       testCase = this.testMap[testCase]
@@ -765,6 +771,7 @@ class PlaybackState {
       caller: this.currentRunningTest,
       callee: testCase,
       position: this.currentExecutingCommandNode,
+      playbackOptions: this.playbackOptions,
     })
     UiState.selectTest(
       this.stackCaller,
@@ -773,7 +780,10 @@ class PlaybackState {
       true
     )
     this.currentRunningTest = testCase
+    this.playbackOptions = playbackOptions
     this.runningQueue = testCase.commands.slice()
+    if (this.playbackOptions.assertionsDisabled)
+      this.logger.warn('Assertions have been disabled for this test.')
     let playbackTree = createPlaybackTree(this.runningQueue)
     this.setCurrentExecutingCommandNode(playbackTree.startingCommandNode)
     return playbackTree.startingCommandNode
@@ -783,6 +793,9 @@ class PlaybackState {
   unwindTestCase() {
     const top = this.callstack.pop()
     this.currentRunningTest = top.caller
+    this.playbackOptions = {
+      assertionsDisabled: !!top.playbackOptions.assertionsDisabled,
+    }
     this.setCurrentExecutingCommandNode(top.position.next)
     this.runningQueue = top.caller.commands.slice()
     UiState.selectTest(
@@ -810,6 +823,7 @@ class PlaybackState {
   resetState() {
     this.clearCommandStates()
     this.clearStack()
+    this.playbackOptions = {}
     this.variables.clear()
     this.finishedTestsCount = 0
     this.noStatisticsEffects = false

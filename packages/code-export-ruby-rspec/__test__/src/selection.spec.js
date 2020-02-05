@@ -24,36 +24,28 @@ describe('selection location code emitter', () => {
     }).toThrow('Unknown selection locator notExists')
   })
   it('should assume when no selector is given that it is the label locator', () => {
-    return expect(emit('label')).resolves.toBe(
-      `By.XPath("//option[. = 'label']")`
+    return expect(emit('label')).resolves.toEqual(
+      `:xpath, "//option[. = 'label']"`
     )
   })
   it('should emit label locator', () => {
     const type = 'label'
     const selector = 'a label'
-    return expect(emit(`${type}=${selector}`)).resolves.toBe(
-      `By.XPath("//option[. = '${selector}']")`
-    )
+    return expect(emit(`${type}=${selector}`)).resolves.toMatchSnapshot()
   })
   it('should emit id locator', () => {
     const type = 'id'
     const selector = 'someId'
-    return expect(emit(`${type}=${selector}`)).resolves.toBe(
-      `By.CssSelector("*[id='${selector}']")`
-    )
+    return expect(emit(`${type}=${selector}`)).resolves.toMatchSnapshot()
   })
   it('should emit value locator', () => {
     const type = 'value'
     const selector = 'someValue'
-    return expect(emit(`${type}=${selector}`)).resolves.toBe(
-      `By.CssSelector("*[value='${selector}']")`
-    )
+    return expect(emit(`${type}=${selector}`)).resolves.toMatchSnapshot()
   })
   it('should emit index locator', () => {
     const type = 'index'
     const selector = '2'
-    return expect(emit(`${type}=${selector}`)).resolves.toBe(
-      `By.CssSelector("*:nth-child(${selector})")`
-    )
+    return expect(emit(`${type}=${selector}`)).resolves.toMatchSnapshot()
   })
 })

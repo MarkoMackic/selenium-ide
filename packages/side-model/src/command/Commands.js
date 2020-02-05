@@ -561,6 +561,7 @@ export const Commands = [
       name: 'run',
       description: 'Runs a test case from the current project.',
       target: ArgTypes.testCase,
+      value: { isOptional: true, ...ArgTypes.optionalFlag },
     },
   ],
   [
@@ -976,6 +977,16 @@ export const Commands = [
       description: 'Wait for a target element to be visible on the page.',
       target: ArgTypes.locator,
       value: ArgTypes.waitTime,
+    },
+  ],
+  [
+    'waitForText',
+    {
+      name: 'wait for text',
+      type: TargetTypes.LOCATOR,
+      description: 'Wait for the text of an element to be equal to the value.',
+      target: ArgTypes.locator,
+      value: ArgTypes.text,
     },
   ],
   [

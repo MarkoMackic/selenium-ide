@@ -673,6 +673,7 @@ Recorder.addEventHandler(
   'contextMenu',
   'contextmenu',
   function(event) {
+<<<<<<< HEAD
     if(!this.jdxContext.contextAlreadyRecorded)
       record("contextMenu", locatorBuilders.buildAll(event.target), '');
 
@@ -695,6 +696,34 @@ Recorder.addEventHandler(
     //   }
     //   myPort.onMessage.removeListener(this)
     // })
+=======
+    let myPort = browser.runtime.connect()
+    let tmpTarget = locatorBuilders.buildAll(event.target)
+    myPort.onMessage.addListener(function(m) {
+      if (m.cmd.includes('Text') || m.cmd.includes('Label')) {
+        let tmpText = bot.dom.getVisibleText(event.target)
+        record(m.cmd, tmpTarget, tmpText)
+      } else if (m.cmd.includes('Title')) {
+        let tmpTitle = goog.string.normalizeSpaces(
+          event.target.ownerDocument.title
+        )
+        record(m.cmd, [[tmpTitle]], '')
+      } else if (
+        m.cmd.includes('Present') ||
+        m.cmd.includes('Checked') ||
+        m.cmd.includes('Editable') ||
+        m.cmd.includes('Selected') ||
+        m.cmd.includes('Visible') ||
+        m.cmd === 'mouseOver'
+      ) {
+        record(m.cmd, tmpTarget, '')
+      } else if (m.cmd.includes('Value')) {
+        let tmpValue = event.target.value
+        record(m.cmd, tmpTarget, tmpValue)
+      }
+      myPort.onMessage.removeListener(this)
+    })
+>>>>>>> e920f335513d2ebc52e12a68e2b92ee40aa41360
   },
   true
 )

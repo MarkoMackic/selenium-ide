@@ -17,7 +17,7 @@
 
 import { codeExport as exporter } from '@seleniumhq/side-utils'
 import emitter from './command'
-import location from './location'
+import { location } from '@seleniumhq/code-export-csharp-commons'
 import { generateHooks } from './hook'
 import _default from 'diff-sequences'
 
@@ -48,6 +48,12 @@ function generateMethodDeclaration(name) {
   return `public void ${exporter.parsers.sanitizeName(name)}() \n{`
 }
 
+function generateNamespace(name) {
+  return `namespace ${exporter.parsers.capitalize(
+    exporter.parsers.sanitizeName(name)
+  )}\n{\n`
+}
+
 function generateFilename(name) {
   return `${exporter.parsers.capitalize(
     exporter.parsers.sanitizeName(name)
@@ -61,6 +67,7 @@ export async function emitTest({
   tests,
   project,
   enableOriginTracing,
+  beforeEachOptions,
 }) {
   global.baseUrl = baseUrl
   const testDeclaration = generateTestDeclaration(test.name)
@@ -77,6 +84,7 @@ export async function emitTest({
     suiteDeclaration,
     suiteName,
     project,
+    beforeEachOptions,
   })
   return {
     filename: generateFilename(test.name),
@@ -91,6 +99,7 @@ export async function emitSuite({
   tests,
   project,
   enableOriginTracing,
+  beforeEachOptions,
 }) {
   global.baseUrl = baseUrl
   const result = await exporter.emit.testsFromSuite(tests, suite, opts, {
@@ -104,17 +113,19 @@ export async function emitSuite({
     suiteDeclaration,
     suite,
     project,
+    beforeEachOptions,
   })
   return {
     filename: generateFilename(suite.name),
-    body: emitOrderedSuite(_suite),
+    body: emitOrderedSuite(_suite, suite.name),
   }
 }
 
-function emitOrderedSuite(emittedSuite) {
+function emitOrderedSuite(emittedSuite, name) {
   let result = ''
   result += emittedSuite.headerComment
   result += emittedSuite.dependencies
+  result += `${generateNamespace(name)}`
   result += emittedSuite.suiteDeclaration
   result += emittedSuite.variables
   //result += emittedSuite.beforeAll
@@ -140,6 +151,7 @@ function emitOrderedSuite(emittedSuite) {
     }
   }
   result += emittedSuite.suiteEnd
+  result += '}' // terminate namespace
   return result
 }
 

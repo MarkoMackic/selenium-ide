@@ -18,7 +18,7 @@
 import fs from 'fs'
 import path from 'path'
 import { emitTest, emitSuite, _emitMethod, _findTestByName } from '../../src'
-import { normalizeTestsInSuite } from '../../../selenium-ide/src/neo/IO/normalize'
+import { project as projectProcessor } from '@seleniumhq/side-utils'
 
 function readFile(filename) {
   return JSON.parse(
@@ -37,13 +37,27 @@ function readFile(filename) {
   )
 }
 
-describe('Code Export C# xUnit Selenium', () => {
+describe('Code Export C# xUnit', () => {
   it('should export a test', async () => {
     const project = readFile('single-test.side')
     const results = await emitTest({
       baseUrl: project.url,
       test: project.tests[0],
       tests: project.tests,
+    })
+    expect(results.body).toBeDefined()
+    expect(results.body).toMatchSnapshot()
+  })
+  it('should export a test with grid execution', async () => {
+    const project = readFile('single-test.side')
+    const results = await emitTest({
+      baseUrl: project.url,
+      test: project.tests[0],
+      tests: project.tests,
+      beforeEachOptions: {
+        browserName: 'Firefox',
+        gridUrl: 'http://localhost:4444/wd/hub',
+      },
     })
     expect(results.body).toBeDefined()
     expect(results.body).toMatchSnapshot()
@@ -123,7 +137,7 @@ describe('Code Export C# xUnit Selenium', () => {
 function normalizeProject(project) {
   let _project = { ...project }
   _project.suites.forEach(suite => {
-    normalizeTestsInSuite({ suite, tests: _project.tests })
+    projectProcessor.normalizeTestsInSuite({ suite, tests: _project.tests })
   })
   return _project
 }

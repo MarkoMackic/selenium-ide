@@ -16,12 +16,12 @@
 // under the License.
 
 export const availableLanguages = {
-  'csharp-nunit': require('code-export-csharp-nunit'),
-  'csharp-xunit': require('code-export-csharp-xunit'),
-  'java-junit': require('code-export-java-junit'),
+  'csharp-nunit': require('@seleniumhq/code-export-csharp-nunit'),
+  'csharp-xunit': require('@seleniumhq/code-export-csharp-xunit'),
+  'java-junit': require('@seleniumhq/code-export-java-junit'),
   'java-testng-modded': require('code-export-java-testng-modded'),
-  'javascript-mocha': require('code-export-javascript-mocha'),
-  'python-pytest': require('code-export-python-pytest'),
+  'javascript-mocha': require('@seleniumhq/code-export-javascript-mocha'),
+  'ruby-rspec': require('@seleniumhq/code-export-ruby-rspec'),
 }
 
 function registerCommand(language, command, emitter) {
@@ -62,7 +62,7 @@ function registerAfterAll(language, emitter) {
 
 function emitTest(
   language,
-  { url, test, tests, project, enableOriginTracing }
+  { url, test, tests, project, enableOriginTracing, beforeEachOptions }
 ) {
   return availableLanguages[language].default.emit.test({
     baseUrl: url,
@@ -70,12 +70,13 @@ function emitTest(
     tests,
     project,
     enableOriginTracing,
+    beforeEachOptions,
   })
 }
 
 export function emitSuite(
   language,
-  { url, suite, tests, project, enableOriginTracing }
+  { url, suite, tests, project, enableOriginTracing, beforeEachOptions }
 ) {
   return availableLanguages[language].default.emit.suite({
     baseUrl: url,
@@ -83,6 +84,7 @@ export function emitSuite(
     tests,
     project,
     enableOriginTracing,
+    beforeEachOptions,
   })
 }
 

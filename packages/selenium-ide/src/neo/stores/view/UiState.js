@@ -69,12 +69,31 @@ class UiState {
   pauseNotificationSent = false
   @observable
   isControlled = null
+  @observable
+  selectedExportLanguage = null
+  @observable
+  specifiedRemoteUrl = null
+  @observable
+  gridConfigEnabled = null
 
   constructor() {
     this.suiteStates = {}
     this.filterFunction = this.filterFunction.bind(this)
     this.observePristine()
     storage.get().then(data => {
+      if (data.selectedExportLanguage !== undefined) {
+        this.selectExportLanguage(data.selectedExportLanguage)
+      } else {
+        this.selectExportLanguage('java-junit')
+      }
+      this.specifyRemoteUrl(
+        data.specifiedRemoteUrl
+          ? data.specifiedRemoteUrl
+          : 'http://localhost:4444/wd/hub'
+      )
+      data.gridConfigEnabled
+        ? (this.gridConfigEnabled = data.gridConfigEnabled)
+        : (this.gridConfigEnabled = false)
       if (
         data.consoleSize !== undefined &&
         data.consoleSize >= this.minConsoleHeight
@@ -401,6 +420,30 @@ class UiState {
   @action.bound
   setSelectingTarget(isSelecting) {
     this.isSelectingTarget = isSelecting
+  }
+
+  @action.bound
+  selectExportLanguage(language) {
+    this.selectedExportLanguage = language
+    storage.set({
+      selectedExportLanguage: language,
+    })
+  }
+
+  @action.bound
+  specifyRemoteUrl(url) {
+    this.specifiedRemoteUrl = url
+    storage.set({
+      specifiedRemoteUrl: url,
+    })
+  }
+
+  @action.bound
+  toggleGridConfig() {
+    this.gridConfigEnabled = !this.gridConfigEnabled
+    storage.set({
+      gridConfigEnabled: this.gridConfigEnabled,
+    })
   }
 
   @action.bound

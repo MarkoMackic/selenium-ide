@@ -34,7 +34,7 @@ import Manager from '../../plugin/manager'
 import chromeGetFile from './filesystem/chrome'
 import firefoxGetFile from './filesystem/firefox'
 import { userAgent as parsedUA } from '../../common/utils'
-import { sanitizeProjectName } from './normalize'
+import { project as projectProcessor } from '@seleniumhq/side-utils'
 
 export function getFile(path) {
   const browserName = parsedUA.browser.name
@@ -98,9 +98,9 @@ function downloadProject(project) {
       sendSaveProjectEvent(project)
     } else {
       browser.downloads.download({
-        filename: sanitizeProjectName(project.name) + '.side',
+        filename: projectProcessor.sanitizeProjectName(project.name) + '.side',
         url: createBlob(
-          'application/json',
+          'application/side',
           beautify(JSON.stringify(project), { indent_size: 2 })
         ),
         saveAs: true,
@@ -137,10 +137,10 @@ function exportProject(project) {
   })
 }
 
-export function downloadUniqueFile(filename, body) {
+export function downloadUniqueFile(filename, body, mimeType = 'text/plain') {
   browser.downloads.download({
     filename,
-    url: createBlob('text/plain', body),
+    url: createBlob(mimeType, body),
     saveAs: true,
     conflictAction: 'overwrite',
   })
@@ -150,7 +150,7 @@ let previousFile = null
 // eslint-disable-next-line
 function createBlob(mimeType, data) {
   const blob = new Blob([data], {
-    type: 'text/plain',
+    type: mimeType,
   })
   // If we are replacing a previously generated file we need to
   // manually revoke the object URL to avoid memory leaks.

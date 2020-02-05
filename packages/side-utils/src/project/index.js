@@ -15,35 +15,28 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import { codeExport as exporter } from '@seleniumhq/side-utils'
+import url from 'url'
 
-const emitters = {
-  id: emitId,
-  value: emitValue,
-  label: emitLabel,
-  index: emitIndex,
+export function normalizeTestsInSuite({ suite, tests }) {
+  if (!suite) return
+  let _suite = { ...suite }
+  _suite.tests.forEach((testId, index) => {
+    _suite.tests[index] = tests.find(test => test.id === testId).name
+  })
+  return _suite
 }
 
-export function emit(location) {
-  return exporter.emit.selection(location, emitters)
+export function sanitizeProjectName(projectName) {
+  let name = projectName
+  if (name.startsWith('http')) {
+    // eslint-disable-next-line node/no-deprecated-api
+    return url.parse(projectName).host
+  } else {
+    return name.replace(/([^a-z0-9 ._-]+)/gi, '')
+  }
 }
 
-export default {
-  emit,
-}
-
-function emitId(id) {
-  return Promise.resolve(`By.CssSelector("*[id='${id}']")`)
-}
-
-function emitValue(value) {
-  return Promise.resolve(`By.CssSelector("*[value='${value}']")`)
-}
-
-function emitLabel(label) {
-  return Promise.resolve(`By.XPath("//option[. = '${label}']")`)
-}
-
-function emitIndex(index) {
-  return Promise.resolve(`By.CssSelector("*:nth-child(${index})")`)
+module.exports = {
+  normalizeTestsInSuite,
+  sanitizeProjectName,
 }

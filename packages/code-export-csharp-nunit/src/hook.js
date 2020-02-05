@@ -15,7 +15,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import { codeExport as exporter, userAgent } from '@seleniumhq/side-utils'
+import { codeExport as exporter } from '@seleniumhq/side-utils'
 
 const emitters = {
   afterAll,
@@ -63,7 +63,7 @@ function afterEach() {
       commands: [
         { level: 0, statement: '[TearDown]' },
         { level: 0, statement: 'protected void TearDown() {' },
-        { level: 1, statement: 'Driver.Quit();' },
+        { level: 1, statement: 'driver.Quit();' },
       ],
     },
     endingSyntax: {
@@ -91,23 +91,25 @@ function beforeAll() {
 
 function beforeEach() {
   const params = {
-    startingSyntax: {
+    startingSyntax: ({ browserName, gridUrl } = {}) => ({
       commands: [
         { level: 0, statement: '[SetUp]' },
         { level: 0, statement: 'public void SetUp() {' },
         {
           level: 1,
-          statement: `Driver = new ${
-            userAgent.browserName ? userAgent.browserName : 'Chrome'
-          }Driver();`,
+          statement: gridUrl
+            ? `driver = new RemoteWebDriver(new Uri("${gridUrl}"), new ${
+                browserName ? browserName : 'Chrome'
+              }Options().ToCapabilities());`
+            : `driver = new ${browserName ? browserName : 'Chrome'}Driver();`,
         },
-        { level: 1, statement: 'js = (IJavaScriptExecutor)Driver;' },
+        { level: 1, statement: 'js = (IJavaScriptExecutor)driver;' },
         {
           level: 1,
           statement: 'vars = new Dictionary<string, object>();',
         },
       ],
-    },
+    }),
     endingSyntax: {
       commands: [{ level: 0, statement: '}' }],
     },
@@ -127,6 +129,7 @@ function declareDependencies() {
         { level: 0, statement: 'using OpenQA.Selenium;' },
         { level: 0, statement: 'using OpenQA.Selenium.Chrome;' },
         { level: 0, statement: 'using OpenQA.Selenium.Firefox;' },
+        { level: 0, statement: `using OpenQA.Selenium.Remote;` },
         { level: 0, statement: 'using OpenQA.Selenium.Support.UI;' },
         { level: 0, statement: 'using OpenQA.Selenium.Interactions;' },
         { level: 0, statement: 'using NUnit.Framework;' },
@@ -140,7 +143,7 @@ function declareVariables() {
   const params = {
     startingSyntax: {
       commands: [
-        { level: 0, statement: 'private IWebDriver Driver;' },
+        { level: 0, statement: 'private IWebDriver driver;' },
         {
           level: 0,
           statement:

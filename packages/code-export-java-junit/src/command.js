@@ -114,6 +114,7 @@ export const emitters = {
   waitForElementNotEditable: emitWaitForElementNotEditable,
   waitForElementNotPresent: emitWaitForElementNotPresent,
   waitForElementNotVisible: emitWaitForElementNotVisible,
+  waitForText: emitWaitForText,
   webdriverAnswerOnVisiblePrompt: emitAnswerOnNextPrompt,
   webdriverChooseCancelOnVisibleConfirmation: emitChooseCancelOnNextConfirmation,
   webdriverChooseCancelOnVisiblePrompt: emitChooseCancelOnNextConfirmation,
@@ -308,19 +309,21 @@ function emitControlFlowIf(script) {
 }
 
 function emitControlFlowForEach(collectionVarName, iteratorVarName) {
+  const collectionName = exporter.parsers.capitalize(collectionVarName)
+  const iteratorName = exporter.parsers.capitalize(iteratorVarName)
   return Promise.resolve({
     commands: [
       {
         level: 0,
-        statement: `ArrayList collection = (ArrayList) vars.get("${collectionVarName}");`,
+        statement: `ArrayList collection${collectionName} = (ArrayList) vars.get("${collectionVarName}");`,
       },
       {
         level: 0,
-        statement: `for (int i = 0; i < collection.size() - 1; i++) {`,
+        statement: `for (int i${iteratorName} = 0; i < collection${collectionName}.size() - 1; i${iteratorName}++) {`,
       },
       {
         level: 1,
-        statement: `vars.put("${iteratorVarName}", collection.get(i));`,
+        statement: `vars.put("${iteratorVarName}", collection${collectionName}.get(i));`,
       },
     ],
   })
@@ -939,6 +942,27 @@ async function emitWaitForElementEditable(locator, timeout) {
       statement: `wait.until(ExpectedConditions.elementToBeClickable(${await location.emit(
         locator
       )}));`,
+    },
+    { level: 0, statement: '}' },
+  ]
+  return Promise.resolve({ commands })
+}
+
+async function emitWaitForText(locator, text) {
+  const timeout = 30000
+  const commands = [
+    { level: 0, statement: '{' },
+    {
+      level: 1,
+      statement: `WebDriverWait wait = new WebDriverWait(driver, ${Math.floor(
+        timeout / 1000
+      )});`,
+    },
+    {
+      level: 1,
+      statement: `wait.until(ExpectedConditions.textToBe(${await location.emit(
+        locator
+      )}, "${text}"));`,
     },
     { level: 0, statement: '}' },
   ]

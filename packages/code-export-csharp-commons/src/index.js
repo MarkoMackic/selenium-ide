@@ -15,23 +15,17 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import url from 'url'
+import Command from './command'
+import location from './location'
 
-export function normalizeTestsInSuite({ suite, tests }) {
-  if (!suite) return
-  let _suite = { ...suite }
-  _suite.tests.forEach((testId, index) => {
-    _suite.tests[index] = tests.find(test => test.id === testId).name
-  })
-  return _suite
-}
+const opts = {}
+opts.fileExtension = '.cs'
+opts.commandPrefixPadding = '  '
+opts.terminatingKeyword = '}'
+opts.commentPrefix = '//'
 
-export function sanitizeProjectName(projectName) {
-  let name = projectName
-  if (name.startsWith('http')) {
-    // eslint-disable-next-line node/no-deprecated-api
-    return url.parse(projectName).host
-  } else {
-    return name.replace(/([^a-z0-9 ._-]+)/gi, '')
-  }
+module.exports = {
+  Command,
+  location,
+  opts,
 }
