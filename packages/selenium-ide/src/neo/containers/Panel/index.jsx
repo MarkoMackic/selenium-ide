@@ -69,7 +69,7 @@ const project = observable(new ProjectStore(''))
 UiState.setProject(project)
 
 if (isProduction) {
-  createDefaultSuite(project, { suite: '', test: '' },  true)
+  createDefaultSuite(project, { suite: '', test: '' }, true)
 } else {
   seed(project)
 }
@@ -83,8 +83,7 @@ async function createDefaultSuite(
 ) {
   const suite = aProject.createSuite(name.suite)
 
-  if(suite && isJDXQACompatible && !no_pkg) {
-
+  if (suite && isJDXQACompatible && !no_pkg) {
     let pkg = await ModalState.renamePackage('')
 
     if (!suite.additionalOpts) suite.additionalOpts = {}

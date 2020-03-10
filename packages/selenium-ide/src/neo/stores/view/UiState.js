@@ -556,7 +556,7 @@ class UiState {
   }
 
   getGlobalOpts() {
-    return this._project.globalOpts;
+    return this._project.globalOpts
   }
 
   @action.bound
