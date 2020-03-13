@@ -35,7 +35,6 @@ export default class TestList extends Component {
     renameTest: PropTypes.func,
     duplicateTest: PropTypes.func,
     removeTest: PropTypes.func,
-    codeExport: PropTypes.func,
     noMenu: PropTypes.bool,
   }
   render() {
@@ -159,11 +158,6 @@ export default class TestList extends Component {
                       }
                     : undefined
                 }
-                codeExport={() => {
-                  this.props.codeExport({
-                    test: test.export(),
-                  })
-                }}
                 moveSelectionUp={() => {
                   UiState.selectTestByIndex(index - 1)
                 }}

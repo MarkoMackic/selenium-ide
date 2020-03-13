@@ -104,9 +104,8 @@ class Suite extends React.Component {
         >
           Rename
         </ListMenuItem>
-        <ListMenuItem onClick={this.props.remove}>Delete</ListMenuItem>
+        {/*<ListMenuItem onClick={this.props.remove}>Delete</ListMenuItem>*/}
         <ListMenuItem onClick={this.props.editSettings}>Settings</ListMenuItem>
-        <ListMenuItem onClick={this.props.codeExport}>Export</ListMenuItem>
       </ListMenu>
     )
     //setting component of context menu.
