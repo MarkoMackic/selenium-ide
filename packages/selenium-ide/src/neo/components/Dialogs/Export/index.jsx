@@ -133,7 +133,7 @@ class ExportContent extends React.Component {
                     this.props.cancelSelection()
                     ModalState.showAlert({
                       title: 'Unable to complete code export',
-                      description: error.message,
+                      description: JSON.stringify(error),
                       confirmLabel: 'OK',
                     })
                   })
