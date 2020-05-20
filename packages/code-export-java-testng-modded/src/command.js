@@ -833,15 +833,17 @@ async function emitUncheck(locator) {
 }
 
 async function emitVerifyChecked(locator) {
-  const preCommands = await emitWaitForElementVisible(locator, DEF_TIMEOUT)
+  const preCommands = await emitWaitForElementPresent(locator, DEF_TIMEOUT)
 
   return Promise.resolve(
-    preCommands.commands.concat({
-      level: 0,
-      statement: `org.testng.Assert.assertTrue(driver.findElement(${await location.emit(
-        locator
-      )}).isSelected());`,
-    })
+      {
+          commands: preCommands.commands.concat({
+              level: 0,
+              statement: `org.testng.Assert.assertTrue(driver.findElement(${await location.emit(
+                  locator
+              )}).isSelected());`,
+          })
+      }
   )
 }
 
