@@ -134,7 +134,7 @@ function downloadProject(project) {
           })
           // save java export .. ?
         })
-        .catch(e => showError(e.data.message || JSON.stringify(e)))
+        .catch(e => showError((e.data && e.data.message ) || e.message || JSON.stringify(e)))
     } else {
       browser.downloads.download({
         filename: projectProcessor.sanitizeProjectName(project.name) + '.side',

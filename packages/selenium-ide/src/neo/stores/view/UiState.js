@@ -223,7 +223,7 @@ class UiState {
   _selectTest(test, suite, stack, override) {
     if (!PlaybackState.isPlaying || PlaybackState.paused || override) {
       const _test =
-        stack !== undefined && stack >= 0
+        stack !== undefined && stack >= 0 && (stack in PlaybackState.callstack)
           ? PlaybackState.callstack[stack].callee
           : test
       if (
