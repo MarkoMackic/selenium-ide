@@ -900,7 +900,7 @@ async function emitVerifyElementNotPresent(locator) {
 }
 
 async function emitVerifyNotChecked(locator) {
-  const preCommands = await emitWaitForElementVisible(locator, DEF_TIMEOUT)
+  const preCommands = await emitWaitForElementPresent(locator, DEF_TIMEOUT)
 
   return Promise.resolve({
     commands: preCommands.commands.concat([
