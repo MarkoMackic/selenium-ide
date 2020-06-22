@@ -275,12 +275,45 @@ LocatorBuilders.add('css:data-attr', function cssDataAttr(e) {
   for (let i = 0; i < dataAttributes.length; i++) {
     const attr = dataAttributes[i]
     const value = e.getAttribute(attr)
-    if (attr) {
+    if (value) {
       return `css=*[${attr}="${value}"]`
     }
   }
   return null
 })
+
+
+LocatorBuilders.add('css:data-attr-recursive', function cssDataAttr(e, elementsBetween) {
+    const dataAttributes = ['data-test', 'data-test-id']
+
+    console.log(e, elementsBetween);
+
+    if(elementsBetween === undefined) elementsBetween = []
+
+    for (let i = 0; i < dataAttributes.length; i++) {
+        const attr = dataAttributes[i]
+        const value = e.getAttribute(attr)
+
+        if (value) {
+            if(elementsBetween.length === 0) return null
+
+            elementsBetween.reverse();
+
+            return `css=*[${attr}="${value}"] > ${elementsBetween.join(' > ')}`
+        }
+    }
+
+    if(e.parentElement)
+    {
+        elementsBetween.push(`${e.tagName}:nth-child(${Array.from(e.parentElement.children).indexOf(e) + 1})`)
+        return cssDataAttr(e.parentElement, elementsBetween)
+    }
+    else
+    {
+        return null
+    }
+})
+
 
 LocatorBuilders.add('id', function id(e) {
   if (e.id) {
