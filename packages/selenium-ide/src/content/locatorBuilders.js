@@ -303,7 +303,7 @@ LocatorBuilders.add('css:data-attr-recursive', function cssDataAttr(e, elementsB
 
     if(e.parentElement)
     {
-        elementsBetween.push(`${e.tagName}:nth-child(${Array.from(e.parentElement.children).indexOf(e) + 1})`)
+        elementsBetween.push(`${e.tagName.toLowerCase()}:nth-child(${Array.from(e.parentElement.children).indexOf(e) + 1})`)
         return cssDataAttr(e.parentElement, elementsBetween)
     }
     else
