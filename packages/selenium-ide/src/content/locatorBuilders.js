@@ -286,8 +286,6 @@ LocatorBuilders.add('css:data-attr', function cssDataAttr(e) {
 LocatorBuilders.add('css:data-attr-recursive', function cssDataAttr(e, elementsBetween) {
     const dataAttributes = ['data-test', 'data-test-id']
 
-    console.log(e, elementsBetween);
-
     if(elementsBetween === undefined) elementsBetween = []
 
     for (let i = 0; i < dataAttributes.length; i++) {
