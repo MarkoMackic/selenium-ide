@@ -260,6 +260,19 @@ Selenium.prototype.eval = function(
   }
 }
 
+Selenium.prototype.doAssertCss = function(locator, value) {
+
+    const element = this.browserbot.findElement(locator)
+    const elCss = this.findEffectiveStyle(element);
+
+    value.split(";").filter(p => !!p).map(p => p.split("=").map(s => s.trim())).filter(p => p.length === 2).forEach(p => {
+        console.log(p);
+        if(elCss.getPropertyValue(p[0]) != p[1])
+            throw new Error(`CSS property ${p[0]} doesn't match. Expected ${p[1]} but found ${elCss.getPropertyValue(p[0])}`)
+    })
+
+}
+
 Selenium.prototype.doEvaluateConditional = function(script) {
   return !!this.eval(script.script, script.argv, true, true)
 }

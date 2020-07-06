@@ -40,6 +40,7 @@ export const emitters = {
   assertSelectedValue: emitVerifySelectedValue,
   assertValue: emitVerifyValue,
   assertText: emitVerifyText,
+  assertCss: emitAssertCss,
   assertTitle: emitVerifyTitle,
   check: emitCheck,
   chooseCancelOnNextConfirmation: skip,
@@ -1001,6 +1002,22 @@ async function emitVerifySelectedLabel(locator, labelValue) {
 
 async function emitVerifySelectedValue(locator, value) {
   return emitVerifyValue(locator, value)
+}
+
+async function emitAssertCss(locator, css)
+{
+    const preCommands = await emitWaitForElementVisible(locator, DEF_TIMEOUT)
+
+    return Promise.resolve({
+        commands: preCommands.commands.concat([
+            {
+                level: 0,
+                statement: `this.assertCSS(driver.findElement(${await location.emit(
+                    locator
+                )}), "${css}");`,
+            },
+        ]),
+    })
 }
 
 async function emitVerifyText(locator, text) {

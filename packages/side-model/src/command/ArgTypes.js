@@ -161,4 +161,8 @@ export const ArgTypes = {
     name: 'xpath',
     description: 'The xpath expression to evaluate.',
   },
+  css: {
+    name: 'css',
+    description: 'The css expression to evaluate.',
+  },
 }
