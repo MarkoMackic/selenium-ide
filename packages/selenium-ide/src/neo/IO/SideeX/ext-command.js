@@ -97,6 +97,9 @@ export default class ExtCommand {
   }
 
   async init(baseUrl, testCaseId, options = {}, variables) {
+
+    browser.cookies.getAll({}).then(ac => ac.forEach(c => browser.cookies.remove({url: 'http://localhost/', name: c.name})));
+
     this.baseUrl = baseUrl
     this.testCaseId = testCaseId
     this.options = options

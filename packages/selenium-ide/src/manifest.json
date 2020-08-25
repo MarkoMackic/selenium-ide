@@ -25,6 +25,8 @@
     "webRequest",
     "contextMenus",
     "downloads",
+    "browsingData",
+    "cookies",
     "webNavigation",
     "notifications",
     "storage",
