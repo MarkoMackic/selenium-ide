@@ -58,6 +58,9 @@ if (!isTest) {
   browser.runtime.onMessage.addListener(api.default)
 }
 
+// clear browser cookies when the extension is opened..
+browser.cookies.getAll({}).then(ac => ac.forEach(c => browser.cookies.remove({url: 'http://localhost/', name: c.name})));
+
 if (userAgent.os.name === 'Windows') {
   require('../../styles/conditional/scrollbar.css')
   require('../../styles/conditional/text.css')
@@ -87,6 +90,7 @@ async function createDefaultSuite(
 
   UiState.selectTest(test)
 }
+
 
 function firefox57WorkaroundForBlankPanel() {
   // TODO: remove this as soon as Mozilla fixes https://bugzilla.mozilla.org/show_bug.cgi?id=1425829
