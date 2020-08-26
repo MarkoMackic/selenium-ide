@@ -97,9 +97,6 @@ export default class ExtCommand {
   }
 
   async init(baseUrl, testCaseId, options = {}, variables) {
-
-    browser.cookies.getAll({}).then(ac => ac.forEach(c => browser.cookies.remove({url: 'http://localhost/', name: c.name})));
-
     this.baseUrl = baseUrl
     this.testCaseId = testCaseId
     this.options = options
@@ -108,6 +105,7 @@ export default class ExtCommand {
     this.windowName = ''
     this.windowTimeout = 2000
     if (!this.options.softInit) {
+      browser.cookies.getAll({}).then(ac => ac.forEach(c => browser.cookies.remove({url: 'http://localhost/', name: c.name})));
       this.windowSession.generalUseLastPlayedTestCaseId = testCaseId
       this.setCurrentPlayingFrameLocation('root')
     } else if (!this.getCurrentPlayingFrameLocation()) {
