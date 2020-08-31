@@ -393,10 +393,10 @@ async function emitDoubleClick(target) {
 async function emitDragAndDrop(dragged, dropped) {
   let preCommands = []
   preCommands = preCommands.concat(
-    await emitWaitForElementVisible(dragged, DEF_TIMEOUT).commands
+    (await emitWaitForElementVisible(dragged, DEF_TIMEOUT)).commands
   )
   preCommands = preCommands.concat(
-    await emitWaitForElementVisible(dropped, DEF_TIMEOUT).commands
+    (await emitWaitForElementVisible(dropped, DEF_TIMEOUT)).commands
   )
   const commands = [
     { level: 0, statement: '{' },
