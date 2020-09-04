@@ -890,7 +890,7 @@ async function emitVerifyElementNotPresent(locator) {
     { level: 0, statement: '{' },
     {
       level: 1,
-      statement: `List<org.openqa.selenium.WebElement> elements = driver.findElements(${await location.emit(
+      statement: `java.util.List<org.openqa.selenium.WebElement> elements = driver.findElements(${await location.emit(
         locator
       )});`,
     },
