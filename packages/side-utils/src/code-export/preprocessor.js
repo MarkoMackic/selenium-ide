@@ -37,7 +37,8 @@ export function preprocessParameter(
 }
 
 export function defaultPreprocessor(param, variableLookup) {
-  if (!param) return
+  // preserve type
+  if (!param) return param;
   const _var = param.match(/\$\{(\w+)\}/)
   if (_var) {
     return param.replace(_var[0], variableLookup(_var[1]))

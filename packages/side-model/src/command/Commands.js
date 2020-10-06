@@ -165,7 +165,7 @@ export const Commands = [
       description: `Confirm that the text of an element does not contain the provided value.
       The test will stop if the assert fails.`,
       target: ArgTypes.locator,
-      value: ArgTypes.pattern,
+      value: { isOptional: true, ...ArgTypes.pattern },
     },
   ],
   [
@@ -207,7 +207,7 @@ export const Commands = [
       description: `Confirm that the text of an element contains the provided value.
       The test will stop if the assert fails.`,
       target: ArgTypes.locator,
-      value: ArgTypes.pattern,
+      value: { isOptional: true, ...ArgTypes.pattern },
     },
   ],
   [
@@ -229,7 +229,7 @@ export const Commands = [
         the value will be "on" or "off" depending on whether the element is 
         checked or not. The test will stop if the assert fails.`,
       target: ArgTypes.locator,
-      value: ArgTypes.pattern,
+      value: { isOptional: true, ...ArgTypes.pattern }
     },
   ],
   [
