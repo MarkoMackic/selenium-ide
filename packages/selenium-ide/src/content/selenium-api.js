@@ -1982,7 +1982,7 @@ Selenium.prototype.getAlert = function() {
 
      */
   if (!this.browserbot.hasAlerts()) {
-    Assert.fail('There were no alerts') // eslint-disable-line no-undef
+    throw new Error('There were no alerts') // eslint-disable-line no-undef
   }
   return this.browserbot.getNextAlert()
 }
@@ -2018,7 +2018,7 @@ Selenium.prototype.getConfirmation = function() {
    * @return string the message of the most recent JavaScript confirmation dialog
    */
   if (!this.browserbot.hasConfirmations()) {
-    Assert.fail('There were no confirmations') // eslint-disable-line no-undef
+    throw new Error('There were no confirmations') // eslint-disable-line no-undef
   }
   return this.browserbot.getNextConfirmation()
 }
@@ -2042,7 +2042,7 @@ Selenium.prototype.getPrompt = function() {
    * @return string the message of the most recent JavaScript question prompt
    */
   if (!this.browserbot.hasPrompts()) {
-    Assert.fail('There were no prompts') // eslint-disable-line no-undef
+    throw new Error('There were no prompts') // eslint-disable-line no-undef
   }
   return this.browserbot.getNextPrompt()
 }
@@ -2164,12 +2164,12 @@ Selenium.prototype.getTable = function(tableCellAddress) {
   let table = this.browserbot.findElement(tableName)
   if (row > table.rows.length) {
     // eslint-disable-next-line no-undef
-    Assert.fail(
+    throw new Error(
       'Cannot access row ' + row + ' - table has ' + table.rows.length + ' rows'
     )
   } else if (col > table.rows[row].cells.length) {
     // eslint-disable-next-line no-undef
-    Assert.fail(
+    throw new Error(
       'Cannot access column ' +
         col +
         ' - table row has ' +
@@ -2292,14 +2292,14 @@ Selenium.prototype.findSelectedOptionProperties = function(locator, property) {
       selectedOptions.push(propVal)
     }
   }
-  if (selectedOptions.length == 0) Assert.fail('No option selected') // eslint-disable-line no-undef
+  if (selectedOptions.length == 0) throw new Error('No option selected') // eslint-disable-line no-undef
   return selectedOptions
 }
 
 Selenium.prototype.findSelectedOptionProperty = function(locator, property) {
   let selectedOptions = this.findSelectedOptionProperties(locator, property)
   if (selectedOptions.length > 1) {
-    Assert.fail('More than one selected option!') // eslint-disable-line no-undef
+    throw new Error('More than one selected option!') // eslint-disable-line no-undef
   }
   return selectedOptions[0]
 }
@@ -2500,9 +2500,7 @@ Selenium.prototype.isEditable = function(locator) {
    * @return boolean true if the input element is editable, false otherwise
    */
   let element = this.browserbot.findElement(locator)
-  if (element.value == undefined) {
-    Assert.fail('Element ' + locator + ' is not an input.') // eslint-disable-line no-undef
-  }
+
   if (element.disabled) {
     return false
   }
@@ -2520,6 +2518,21 @@ Selenium.prototype.isEditable = function(locator) {
       return false
     }
   }
+
+  if(Array.from(element.classList).some((c) => c.startsWith("x-")))
+  {
+    // Ext disabled els
+    let tmpEl = element;
+
+    while(tmpEl)
+    {
+        if(Array.from(tmpEl.classList).some(c => c.startsWith("x-") && c.includes("disabled")))
+          return false;
+
+        tmpEl = tmpEl.parentElement;
+    }
+  }
+
   return true
 }
 
@@ -2757,7 +2770,7 @@ Selenium.prototype.doSetCursorPosition = function(locator, position) {
    */
   let element = this.browserbot.findElement(locator)
   if (element.value == undefined) {
-    Assert.fail('Element ' + locator + ' is not an input.') // eslint-disable-line no-undef
+    throw new Error('Element ' + locator + ' is not an input.') // eslint-disable-line no-undef
   }
   if (position == -1) {
     position = element.value.length
@@ -2966,7 +2979,7 @@ Selenium.prototype.getCursorPosition = function(locator) {
       elementRange.move('character', 0)
       elementRange.setEndPoint('EndToEnd', selectRange)
     } catch (e) {
-      Assert.fail('There is no cursor on this page!') // eslint-disable-line no-undef
+      throw new Error('There is no cursor on this page!') // eslint-disable-line no-undef
     }
     let answer = String(elementRange.text).replace(/\r/g, '').length
     return answer
@@ -2977,7 +2990,7 @@ Selenium.prototype.getCursorPosition = function(locator) {
         typeof win.getSelection().rangeCount != undefined &&
         win.getSelection().rangeCount == 0
       ) {
-        Assert.fail('There is no cursor on this page!') // eslint-disable-line no-undef
+        throw new Error('There is no cursor on this page!') // eslint-disable-line no-undef
       }
       return element.selectionStart
     }
