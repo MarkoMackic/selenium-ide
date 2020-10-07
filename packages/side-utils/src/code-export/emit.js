@@ -63,7 +63,7 @@ export function emitCommand(
         command.target,
         emitter.targetPreprocessor,
         variableLookup,
-        { ignoreEscaping }
+        { ignoreEscaping: command.command == 'storeJson' }
       ),
       preprocessParameter(
         command.value,
