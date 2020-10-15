@@ -57,7 +57,7 @@ export function emitCommand(
 ) {
   validateCommand(command)
   if (emitter) {
-    const ignoreEscaping = ['storeJson', 'assertText', 'assertValue', 'assertNotText'].includes(command.command);
+    const ignoreEscaping = ['storeJson', 'assertText', 'assertValue', 'assertNotText', 'sendKeys'].includes(command.command);
     let result = emitter(
       preprocessParameter(
         command.target,

@@ -658,7 +658,7 @@ export const Commands = [
         the simple "type" command, which forces the specified value into the 
         page directly, this command will not replace the existing content.`,
       target: ArgTypes.locator,
-      value: ArgTypes.keySequence,
+      value: {...ArgTypes.keySequence, isOptional: true},
     },
   ],
   [
