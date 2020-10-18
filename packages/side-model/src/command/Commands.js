@@ -790,7 +790,7 @@ export const Commands = [
         uploaded to the input (for type=file), NOTE: XPath locators are not 
         supported.`,
       target: ArgTypes.locator,
-      value: ArgTypes.value,
+      value: {...ArgTypes.value, isOptional : true},
     },
   ],
   [
