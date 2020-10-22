@@ -313,6 +313,53 @@ LocatorBuilders.add('css:data-attr-recursive', function cssDataAttr(e, elementsB
 })
 
 
+
+LocatorBuilders.add('xpath:data-attr', function cssDataAttr(e) {
+    const dataAttributes = ['data-test', 'data-test-id']
+    for (let i = 0; i < dataAttributes.length; i++) {
+      const attr = dataAttributes[i]
+      const value = e.getAttribute(attr)
+           
+      if (value) {
+        
+        // check if there are multiple elements with data   
+        
+        return `xpath=(//${e.tagName}[@${attr}="${value}"])[${Array.from(document.querySelectorAll(`*[${attr}="${value}"]`)).indexOf(e) + 1}]`
+      }
+    }
+    return null
+  })
+  
+  
+  LocatorBuilders.add('xpath:data-attr-recursive', function cssDataAttr(e, elementsBetween) {
+      const dataAttributes = ['data-test', 'data-test-id']
+  
+      if(elementsBetween === undefined) elementsBetween = []
+  
+      for (let i = 0; i < dataAttributes.length; i++) {
+          const attr = dataAttributes[i]
+          const value = e.getAttribute(attr)
+  
+          if (value) {
+              if(elementsBetween.length === 0) return null
+  
+              elementsBetween.reverse();
+  
+              return `xpath=(//${e.tagName}[@${attr}="${value}"])[${Array.from(document.querySelectorAll(`*[${attr}="${value}"]`)).indexOf(e) + 1}]/${elementsBetween.join('/')}`
+          }
+      }
+  
+      if(e.parentElement)
+      {
+          elementsBetween.push(`${e.tagName.toLowerCase()}[${Array.from(e.parentElement.children).indexOf(e) + 1}]`)
+          return cssDataAttr(e.parentElement, elementsBetween)
+      }
+      else
+      {
+          return null
+      }
+  })
+
 LocatorBuilders.add('id', function id(e) {
   if (e.id) {
     return 'id=' + e.id
