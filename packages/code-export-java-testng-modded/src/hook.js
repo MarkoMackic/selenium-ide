@@ -15,7 +15,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import { codeExport as exporter } from '@seleniumhq/side-utils'
+import { codeExport as exporter,  stringEscape as escape  } from '@seleniumhq/side-utils'
 
 const emitters = {
   afterAll,
@@ -38,6 +38,43 @@ export function generateHooks(exportObject) {
     result[hookName] = generate(hookName, exportObject)
   })
   return result
+}
+
+export function generateMethodHooks()
+{
+    let ieb = new exporter.hook({initalEmitter: inEachBegin});
+    let iee = new exporter.hook({initalEmitter: inEachEnd});
+    let bec = new exporter.hook({initalEmitter: beforeEachCommand});
+
+
+    return {
+        inEachBegin : ieb,
+        inEachEnd : iee,
+        beforeEachCommand: bec
+    }
+
+}
+
+function inEachBegin({test})
+{
+  const commands = [
+    { level: 0, statement: `this.getRecordingManager().initializeRecording("${escape(JSON.stringify(test.commands))}");`},
+    { level: 0, statement: 'this.getRecordingManager().startRecording();' },
+  ]
+  return Promise.resolve(commands)
+}
+
+function inEachEnd()
+{
+  const commands = [
+    { level: 0, statement: 'this.getRecordingManager().endRecording();' },
+  ]
+  return Promise.resolve(commands);
+}
+
+function beforeEachCommand({command})
+{
+  return Promise.resolve('this.getRecordingManager().step();');
 }
 
 function afterAll() {

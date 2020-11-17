@@ -16,7 +16,7 @@
 // under the License.
 
 export default class Hook {
-  constructor({ startingSyntax, endingSyntax, registrationLevel } = {}) {
+  constructor({ startingSyntax, endingSyntax, registrationLevel, initalEmitter } = {}) {
     this.startingSyntax = startingSyntax
     this.endingSyntax = endingSyntax
     this.registrationLevel = registrationLevel
@@ -25,6 +25,8 @@ export default class Hook {
     this.register = this.register.bind(this)
     this.isRegistered = this.isRegistered.bind(this)
     this.clearRegister()
+
+    if(initalEmitter && typeof initalEmitter === 'function') this.register(initalEmitter)
   }
 
   clearRegister() {
@@ -32,7 +34,7 @@ export default class Hook {
   }
 
   async emit(
-    { isOptional, test, suite, tests, project, startingSyntaxOptions } = {
+    { isOptional, test, suite, tests, project, command, startingSyntaxOptions } = {
       isOptional: false,
     }
   ) {
@@ -54,12 +56,15 @@ export default class Hook {
     }
     const name = test ? test.name : suite ? suite.name : undefined
     const emittedCommands = (await Promise.all(
-      this.emitters.map(emitter => emitter({ name, tests, project }))
+      this.emitters.map(emitter => emitter({ name, test, tests, project, command }))
     )).filter(entry => entry != undefined)
     if (isOptional && !emittedCommands.length) return
     emittedCommands.forEach(command => {
       if (typeof command === 'object') {
-        commands.push(command)
+        if(Array.isArray(command))
+            command.forEach((v) => commands.push(v));
+        else
+            commands.push(command);
       } else if (typeof command === 'string') {
         command.split('\n').forEach(statement => {
           commands.push({

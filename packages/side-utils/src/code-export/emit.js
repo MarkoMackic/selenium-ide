@@ -105,11 +105,13 @@ export function emitSelection(location, emitters) {
   }
 }
 
-async function emitCommands(commands, emitter) {
-  const _commands = commands.map(command => {
-    return emitter.emit(command)
+async function emitCommands(commands, emitter, hooks) {
+  const _commands = commands.map(async command => {
+    return [hooks && hooks.beforeEachCommand ? await hooks.beforeEachCommand.emit({command}) : undefined, await emitter.emit(command)]
   })
-  const emittedCommands = await Promise.all(_commands)
+
+  const emittedCommands = (await Promise.all(_commands)).flat();
+
   let result = []
   emittedCommands.forEach(entry => {
     if (typeof entry === 'string' && entry.includes('\n')) {
@@ -273,14 +275,18 @@ async function emitTest(
   result.testDeclaration = render(testDeclaration, {
     startingLevel: testLevel,
   })
-  result.inEachBegin = render(
-    await hooks.inEachBegin.emit({ test, tests, project, isOptional: true }),
-    {
-      startingLevel: commandLevel,
-    }
-  )
+
+  if(hooks && hooks.inEachBegin)
+  {
+    result.inEachBegin = render(
+        await hooks.inEachBegin.emit({ test, tests, project, isOptional: true }),
+        {
+          startingLevel: commandLevel,
+        }
+    )
+  }
   result.commands = render(
-    await emitCommands(test.commands, emitter).catch(error => {
+    await emitCommands(test.commands, emitter, hooks).catch(error => {
       // prefix test name on error
       throw new Error(`Test '${test.name}' has a problem: ${error.message}`)
     }),
@@ -290,12 +296,15 @@ async function emitTest(
       enableOriginTracing,
     }
   )
-  result.inEachEnd = render(
-    await hooks.inEachEnd.emit({ test, tests, project, isOptional: true }),
-    {
-      startingLevel: commandLevel,
-    }
-  )
+  if(hooks && hooks.inEachEnd)
+  {
+    result.inEachEnd = render(
+        await hooks.inEachEnd.emit({ test, tests, project, isOptional: true }),
+        {
+          startingLevel: commandLevel,
+        }
+    )
+  }
   result.testEnd = render(terminatingKeyword, { startingLevel: testLevel })
 
   return result
@@ -310,6 +319,7 @@ async function emitTestsFromSuite(
     enableDescriptionAsComment,
     generateTestDeclaration,
     project,
+    hooks
   }
 ) {
   let result = {}
@@ -323,6 +333,7 @@ async function emitTestsFromSuite(
       enableOriginTracing,
       enableDescriptionAsComment,
       project,
+      hooks
     })
   }
   return result
@@ -435,17 +446,17 @@ function emitOrderedSuite(emittedSuite) {
   if (emittedSuite.tests.testDeclaration) {
     const test = emittedSuite.tests
     result += test.testDeclaration
-    result += test.inEachBegin
+    result += test.inEachBegin || ''
     result += test.commands
-    result += test.inEachEnd
+    result += test.inEachEnd || ''
     result += test.testEnd
   } else {
     for (const testName in emittedSuite.tests) {
       const test = emittedSuite.tests[testName]
       result += test.testDeclaration
-      result += test.inEachBegin
+      result += test.inEachBegin || ''
       result += test.commands
-      result += test.inEachEnd
+      result += test.inEachEnd || ''
       result += test.testEnd
     }
   }

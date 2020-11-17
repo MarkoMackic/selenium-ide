@@ -18,7 +18,7 @@
 import { codeExport as exporter } from '@seleniumhq/side-utils'
 import emitter from './command'
 import location from './location'
-import { generateHooks } from './hook'
+import { generateHooks, generateMethodHooks } from './hook'
 import uuidv4 from 'uuid/v4'
 
 // Define language options
@@ -177,6 +177,7 @@ export async function emitSuite({
     enableDescriptionAsComment,
     generateTestDeclaration: generateTestDeclaration.bind(suite, tests),
     project,
+    hooks: generateMethodHooks()
   })
   const suiteDeclaration = generateSuiteDeclaration(suite.name)
   const _suite = await exporter.emit.suite(result, tests, {
