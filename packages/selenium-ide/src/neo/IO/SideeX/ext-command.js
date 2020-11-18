@@ -565,7 +565,7 @@ export default class ExtCommand {
             'Unable to upload files due to cross origin frames in the page'
           )
         } else {
-          throw e
+            return this.sendMessage('type', locator, value, top);
         }
       }
     } else {
