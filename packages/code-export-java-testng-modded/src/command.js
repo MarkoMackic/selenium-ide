@@ -39,7 +39,9 @@ export const emitters = {
   assertSelectedLabel: emitVerifySelectedLabel,
   assertSelectedValue: emitVerifySelectedValue,
   assertValue: emitVerifyValue,
+  assertValueCaseInsensitive: emitVerifyValueCaseInsensitive,
   assertText: emitVerifyText,
+  assertTextCaseInsensitive: emitVerifyTextCaseInsensitive,
   assertCss: emitAssertCss,
   assertTitle: emitVerifyTitle,
   check: emitCheck,
@@ -110,8 +112,10 @@ export const emitters = {
   verifySelectedLabel: emitVerifySelectedLabel,
   verifySelectedValue: emitVerifySelectedValue,
   verifyText: emitVerifyText,
+  verifyTextCaseInsensitive: emitVerifyTextCaseInsensitive,
   verifyTitle: emitVerifyTitle,
   verifyValue: emitVerifyValue,
+  verifyValueCaseInsnitive: emitVerifyValueCaseInsensitive,
   waitForElementEditable: emitWaitForElementEditable,
   waitForElementPresent: emitWaitForElementPresent,
   waitForElementVisible: emitWaitForElementVisible,
@@ -1035,6 +1039,24 @@ async function emitVerifyText(locator, text) {
   })
 }
 
+
+async function emitVerifyTextCaseInsensitive(locator, text) {
+  const preCommands = await emitWaitForElementVisible(locator, DEF_TIMEOUT)
+
+  text = text.toLowerCase();
+
+  return Promise.resolve({
+    commands: preCommands.commands.concat([
+      {
+        level: 0,
+        statement: `org.hamcrest.MatcherAssert.assertThat(driver.findElement(${await location.emit(
+        locator
+        )}).getText().toLowerCase(), org.hamcrest.CoreMatchers.is("${text}"));`,
+      },
+    ]),
+  })
+}
+
 async function emitVerifyValue(locator, value) {
   const preCommands = await emitWaitForElementVisible(locator, DEF_TIMEOUT)
   const commands = [
@@ -1044,6 +1066,25 @@ async function emitVerifyValue(locator, value) {
       statement: `String value = driver.findElement(${await location.emit(
         locator
       )}).getAttribute("value");`,
+    },
+    { level: 1, statement: `org.hamcrest.MatcherAssert.assertThat(value, org.hamcrest.CoreMatchers.is("${value}"));` },
+    { level: 0, statement: '}' },
+  ]
+  return Promise.resolve({ commands: preCommands.commands.concat(commands) })
+}
+
+async function emitVerifyValueCaseInsensitive(locator, value) {
+  const preCommands = await emitWaitForElementVisible(locator, DEF_TIMEOUT)
+
+  value = value.toLowerCase();
+
+  const commands = [
+    { level: 0, statement: '{' },
+    {
+      level: 1,
+      statement: `String value = driver.findElement(${await location.emit(
+        locator
+      )}).getAttribute("value").toLowerCase();`,
     },
     { level: 1, statement: `org.hamcrest.MatcherAssert.assertThat(value, org.hamcrest.CoreMatchers.is("${value}"));` },
     { level: 0, statement: '}' },

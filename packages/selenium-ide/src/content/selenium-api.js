@@ -338,18 +338,19 @@ Selenium.prototype.doVerifyNotSelectedValue = function(locator, value) {
 Selenium.prototype.doVerifyText = function(locator, value) {
   this.doAssertText(locator, value)
 }
-
+Selenium.prototype.doVerifyTextCaseInsensitive = function(locator, value) {
+  this.doAssertTextCaseInsensitive(locator, value);
+}
 Selenium.prototype.doVerifyNotText = function(locator, value) {
   this.doAssertNotText(locator, value)
 }
 
 Selenium.prototype.doVerifyValue = function(locator, value) {
-  let element = this.browserbot.findElement(locator)
-  if (element.value !== value) {
-    throw new Error(
-      "Actual value '" + element.value + "' did not match '" + value + "'"
-    )
-  }
+  this.doAssertValue(locator, value)
+}
+
+Selenium.prototype.doVerifyValueCaseInsensitive = function(locator, value) {
+  this.doAssertValueCaseInsensitive(locator, value);
 }
 
 Selenium.prototype.doVerifyTitle = function(value) {
@@ -496,6 +497,16 @@ Selenium.prototype.doAssertText = function(locator, value) {
   }
 }
 
+
+Selenium.prototype.doAssertTextCaseInsensitive = function(locator, value) {
+  const element = this.findElementVisible(locator)
+  const visibleText = bot.dom.getVisibleText(element).trim().toLowerCase()
+  if (visibleText !== value.toLowerCase()) {
+    throw new Error(`Actual value "${visibleText}" did not match "${value}"`)
+  }
+}
+
+
 Selenium.prototype.doAssertNotText = function(locator, value) {
   const element = this.findElementVisible(locator)
   const visibleText = bot.dom.getVisibleText(element).trim()
@@ -507,6 +518,15 @@ Selenium.prototype.doAssertNotText = function(locator, value) {
 Selenium.prototype.doAssertValue = function(locator, value) {
   let element = this.browserbot.findElement(locator)
   if (element.value !== value) {
+    throw new Error(
+      "Actual value '" + element.value + "' did not match '" + value + "'"
+    )
+  }
+}
+
+Selenium.prototype.doAssertValueCaseInsensitive = function(locator, value) {
+  let element = this.browserbot.findElement(locator)
+  if (element.value.toLowerCase() !== value.toLowerCase()) {
     throw new Error(
       "Actual value '" + element.value + "' did not match '" + value + "'"
     )
