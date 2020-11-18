@@ -4,8 +4,10 @@ export const isStaging = environment.isStaging
 export const isTest = environment.isTest
 export const userAgent = _userAgent.userAgent
 export const isJDXQACompatible = environment.jdxQACompatible
+export const setFeatures = environment.setFeatures
 
 const axios = require('axios').default
+
 
 export function isChrome() {
   _userAgent.isChrome

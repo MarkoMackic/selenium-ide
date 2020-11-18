@@ -20,9 +20,26 @@ const isStaging = process.env.NODE_ENV === 'staging'
 const isTest = process.env.NODE_ENV === 'test'
 const jdxQACompatible = process.env.JDX_QA_COMPATIBLE === 'true'
 
+
+let gaFeatures = {};
+
+
+const setFeatures = function(features)
+{
+    if(typeof features === 'object' && !(features instanceof Array))
+        gaFeatures = features;
+}
+
+const featureAvailable = function(featureName)
+{
+    return gaFeatures[featureName] == true;
+}
+
 module.exports = {
   isProduction,
   isStaging,
   isTest,
   jdxQACompatible,
+  setFeatures,
+  featureAvailable,
 }

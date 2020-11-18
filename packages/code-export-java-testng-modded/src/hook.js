@@ -15,7 +15,7 @@
 // specific language governing permissions and limitations
 // under the License.
 
-import { codeExport as exporter,  stringEscape as escape  } from '@seleniumhq/side-utils'
+import { codeExport as exporter,  stringEscape as escape, environment as env } from '../../side-utils'
 
 const emitters = {
   afterAll,
@@ -42,6 +42,9 @@ export function generateHooks(exportObject) {
 
 export function generateMethodHooks()
 {
+    if(!env.featureAvailable("journal_recorder"))
+        return {};
+
     let ieb = new exporter.hook({initalEmitter: inEachBegin});
     let iee = new exporter.hook({initalEmitter: inEachEnd});
     let bec = new exporter.hook({initalEmitter: beforeEachCommand});

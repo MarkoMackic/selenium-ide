@@ -20,7 +20,7 @@ import ReactDOM from 'react-dom'
 import { AppContainer } from 'react-hot-loader'
 import { configure } from 'mobx'
 import Panel from '../Panel'
-import { isJDXQACompatible, getJDXServerURL } from '../../../common/utils'
+import { isJDXQACompatible, getJDXServerURL, setFeatures } from '../../../common/utils'
 
 configure({
   enforceActions: 'observed',
@@ -43,6 +43,9 @@ if (isJDXQACompatible) {
         alert("QA server didn't provide version info")
         window.close()
       }
+
+      setFeatures(json.FEATURES || {});
+
       render(Panel)
     })
     .catch(err => {
