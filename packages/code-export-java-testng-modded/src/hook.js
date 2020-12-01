@@ -61,7 +61,6 @@ export function generateMethodHooks()
 function inEachBegin({test})
 {
   const commands = [
-    { level: 0, statement: `this.getRecordingManager().initializeRecording("${escape(JSON.stringify(test.commands))}");`},
     { level: 0, statement: 'this.getRecordingManager().startRecording();' },
   ]
   return Promise.resolve(commands)
@@ -77,7 +76,7 @@ function inEachEnd()
 
 function beforeEachCommand({command})
 {
-  return Promise.resolve('this.getRecordingManager().step();');
+  return Promise.resolve(`this.getRecordingManager().step("${escape(JSON.stringify((({command, value, target, comment}) => { return {command, value, target, comment} })(command)))}");`);
 }
 
 function afterAll() {
