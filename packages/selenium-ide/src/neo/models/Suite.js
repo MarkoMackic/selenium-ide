@@ -24,6 +24,8 @@ export const DEFAULT_TIMEOUT = 300
 
 export const DEFAULT_PACKAGE = 'com.jedox.qa.engines.testng_web.selenium_ide'
 
+export const DEFAULT_DESCRIPTION = 'No description'
+
 export default class Suite {
   id = null
   @observable
@@ -106,6 +108,12 @@ export default class Suite {
   setPackage(pkg) {
     this.additionalOpts.package = pkg
   }
+
+  @action.bound
+  setDescription(description) {
+    this.additionalOpts.description = description
+  }
+
 
   @action.bound
   setOpen(isOpen) {

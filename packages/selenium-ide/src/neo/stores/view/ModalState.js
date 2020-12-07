@@ -325,12 +325,14 @@ class ModalState {
       isParallel: suite.isParallel,
       persistSession: suite.persistSession,
       package: suite.additionalOpts && suite.additionalOpts.package,
+      description: suite.additionalOpts && suite.additionalOpts.description,
       timeout: suite.timeout,
-      done: ({ isParallel, persistSession, timeout, pkg }) => {
+      done: ({ isParallel, persistSession, timeout, pkg, description }) => {
         suite.setTimeout(timeout)
         suite.setParallel(isParallel)
         suite.setPersistSession(persistSession)
         suite.setPackage(pkg)
+        suite.setDescription(description)
         this.cancelSuiteSettings()
       },
     }

@@ -78,10 +78,14 @@ function generateTestDeclaration(tests, name) {
 function generateMethodDeclaration(name) {
   return `public void ${exporter.parsers.sanitizeName(name)}() {`
 }
-function generateSuiteDeclaration(name) {
-  return `public class ${exporter.parsers.capitalize(
+function generateSuiteDeclaration(name, description) {
+  let res = `public class ${exporter.parsers.capitalize(
     exporter.parsers.sanitizeName(name)
-  )} extends com.jedox.qa.engines.testng_web.framework.testexec.Loader {`
+  )} extends com.jedox.qa.engines.testng_web.framework.testexec.Loader {`;
+
+  if(description)
+      return `@com.jedox.qa.engines.testng_web.framework.testexec.annotations.SuiteDescription(description = "${JSON.stringify(description).slice(1, -1)}")\n${res}`;
+  return res;
 }
 function generateFilename(name) {
   return `${exporter.parsers.sanitizeName(name)}${opts.fileExtension}`
@@ -110,7 +114,7 @@ export async function emitTest({
     project,
   })
   const suiteName = test.name
-  const suiteDeclaration = generateSuiteDeclaration(suiteName)
+  const suiteDeclaration = generateSuiteDeclaration(suiteName, test && test.additionalOpts && test.additionalOpts.description)
   const _suite = await exporter.emit.suite(result, tests, {
     ...opts,
     suiteDeclaration,
@@ -179,7 +183,7 @@ export async function emitSuite({
     project,
     hooks: generateMethodHooks()
   })
-  const suiteDeclaration = generateSuiteDeclaration(suite.name)
+  const suiteDeclaration = generateSuiteDeclaration(suite.name,  suite && suite.additionalOpts && suite.additionalOpts.description)
   const _suite = await exporter.emit.suite(result, tests, {
     ...opts,
     suiteDeclaration,

@@ -17,10 +17,11 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import { DEFAULT_TIMEOUT, DEFAULT_PACKAGE } from '../../../models/Suite'
+import { DEFAULT_TIMEOUT, DEFAULT_PACKAGE, DEFAULT_DESCRIPTION } from '../../../models/Suite'
 import Modal from '../../Modal'
 import DialogContainer from '../Dialog'
 import Input from '../../FormInput'
+import TextArea from '../../FormTextArea'
 import FlatButton from '../../FlatButton'
 import Checkbox from '../../Checkbox'
 import Markdown from '../../Markdown'
@@ -60,6 +61,7 @@ class SuiteSettingsContent extends React.Component {
       isParallel: !!props.isParallel,
       persistSession: !!props.persistSession,
       package: props.package,
+      description: props.description
     }
   }
   static propTypes = {
@@ -67,6 +69,7 @@ class SuiteSettingsContent extends React.Component {
     timeout: PropTypes.number,
     isParallel: PropTypes.bool,
     package: PropTypes.string,
+    description: PropTypes.string,
     persistSession: PropTypes.bool,
     submit: PropTypes.func,
     cancel: PropTypes.func,
@@ -93,6 +96,12 @@ class SuiteSettingsContent extends React.Component {
     })
   }
 
+  onDescriptionChange(value) {
+    this.setState({
+      description: value,
+    })
+  }
+
   render() {
     const persistSession = !this.state.isParallel && this.state.persistSession
     return (
@@ -110,6 +119,7 @@ class SuiteSettingsContent extends React.Component {
                   isParallel: this.state.isParallel,
                   persistSession: this.state.persistSession,
                   pkg: this.state.package || DEFAULT_PACKAGE,
+                  description: this.state.description || DEFAULT_DESCRIPTION,
                 })
               }}
               style={{
@@ -141,6 +151,17 @@ class SuiteSettingsContent extends React.Component {
             width={130}
             onChange={this.onPackageChange.bind(this)}
           />
+
+          <TextArea
+            name="suite-description"
+            type="string"
+            label="Package"
+            placeholder={DEFAULT_DESCRIPTION}
+            value={this.state.description}
+            width={130}
+            onChange={this.onDescriptionChange.bind(this)}
+          />
+
 
           <Checkbox
             label="Run in parallel"
