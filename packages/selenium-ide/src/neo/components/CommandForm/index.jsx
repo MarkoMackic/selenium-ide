@@ -42,6 +42,7 @@ export default class CommandForm extends React.Component {
     command: PropTypes.object,
     isSelecting: PropTypes.bool,
     onSubmit: PropTypes.func,
+    disabled: PropTypes.bool
   }
   getCommandName(command) {
     const commandName = Commands.list.get(command).name
@@ -73,7 +74,7 @@ export default class CommandForm extends React.Component {
   }
   render() {
     return (
-      <div className="command-form">
+      <div className={this.props.disabled ? "command-form disabled" : "command-form"}>
         <form
           onSubmit={e => {
             e.preventDefault()

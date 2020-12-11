@@ -82,19 +82,21 @@ export default class Editor extends React.Component {
   render() {
     return (
       <main
-        className={
-          this.props.test && this.props.test.external
-            ? 'editor disabled'
-            : 'editor'
-        }
+        className="editor"
         onKeyDown={this.handleKeyDown.bind(this)}
       >
         <ToolBar />
-        <UrlBar
-          url={this.props.url}
-          urls={this.props.urls}
-          setUrl={this.props.setUrl}
-        />
+        {
+            this.props.test && !this.props.test.external ?
+            (
+                <UrlBar
+                url={this.props.url}
+                urls={this.props.urls}
+                setUrl={this.props.setUrl}
+                />
+            ) : null
+        }
+
         <TestTable
           commands={this.props.test ? this.props.test.commands : null}
           callstackIndex={this.props.callstackIndex}
@@ -107,11 +109,13 @@ export default class Editor extends React.Component {
           clearAllCommands={
             this.props.test ? this.props.test.clearAllCommands : null
           }
+          commandsDisabled={this.props.test && this.props.test.external}
           swapCommands={this.props.test ? this.props.test.swapCommands : null}
         />
         <CommandForm
           command={UiState.selectedCommand}
           setCommand={this.handleCommandChange}
+          disabled={this.props.test && this.props.test.external}
           isSelecting={UiState.isSelectingTarget}
           onSubmit={UiState.selectNextCommand}
         />

@@ -42,6 +42,7 @@ export default class TestTable extends React.Component {
     )
     this.commandLevels = []
     this.node = null
+    this.commandsDisabled = this.props.commandsDisabled
   }
   static propTypes = {
     commands: MobxPropTypes.arrayOrObservableArray,
@@ -52,6 +53,7 @@ export default class TestTable extends React.Component {
     removeCommand: PropTypes.func,
     swapCommands: PropTypes.func,
     clearAllCommands: PropTypes.func,
+    commandsDisabled: PropTypes.bool,
   }
   detectNewCommand(change) {
     this.newCommand = change.added[0]
@@ -114,7 +116,7 @@ export default class TestTable extends React.Component {
           { 'breakpoints-disabled': PlaybackState.breakpointsDisabled }
         )}
       >
-        <table>
+        <table className={this.props.commandsDisabled ? "disabled" : ""}>
           <tbody>
             {this.props.commands
               ? this.props.commands
