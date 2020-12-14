@@ -904,7 +904,33 @@ Selenium.prototype.doClick = function(locator) {
    * @param locator an element locator
    *
    */
+
   let element = this.browserbot.findElement(locator)
+
+  // Fix for boundlist item click for searchable combos ( #0047794 )
+
+  if(locator.includes("combo") && locator.includes("boundlist"))
+  {
+    let val = element.textContent;
+    let boundview = element.getAttribute("data-boundview");
+    let cmb = document.getElementById(boundview.substring(0, boundview.lastIndexOf("-")));
+
+    let iboxes = cmb.getElementsByTagName("input");
+
+    if(iboxes.length == 1)
+    {
+        try
+        {
+            this.doType(`id=${iboxes.item(0).id}`, val);
+            return;
+        }
+        catch(e) {
+            console.error(e);
+        }
+    }
+  }
+
+
   bot.action.click(element)
 }
 
