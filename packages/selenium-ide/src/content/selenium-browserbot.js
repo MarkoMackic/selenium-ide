@@ -313,9 +313,7 @@ BrowserBot.prototype.triggerMouseEvent = function(
   element.dispatchEvent(evt)
 }
 
-//DragAndDropExt, Shuo-Heng Shih, SELAB, CSIE, NCKU, 2016/10/17
-BrowserBot.prototype.triggerDragEvent = function(element, target) {
-  const getXpathOfElement = function(element) {
+BrowserBot.prototype.getXpathOfElement = function(element) {
     if (element == null) {
       return 'null'
     }
@@ -342,7 +340,7 @@ BrowserBot.prototype.triggerDragEvent = function(element, target) {
 
     if (totalTagCount > 1) {
       return (
-        getXpathOfElement(element.parentElement) +
+        this.browserbot.getXpathOfElement(element.parentElement) +
         '/' +
         element.tagName +
         '[' +
@@ -351,8 +349,11 @@ BrowserBot.prototype.triggerDragEvent = function(element, target) {
       )
     }
 
-    return getXpathOfElement(element.parentElement) + '/' + element.tagName
+    return this.browserbot.getXpathOfElement(element.parentElement) + '/' + element.tagName
   }
+//DragAndDropExt, Shuo-Heng Shih, SELAB, CSIE, NCKU, 2016/10/17
+BrowserBot.prototype.triggerDragEvent = function(element, target) {
+
   let script =
     "                                              \
         function simulateDragDrop(sourceNode, destinationNode){\
@@ -391,9 +392,9 @@ BrowserBot.prototype.triggerDragEvent = function(element, target) {
         dispatchEvent(sourceNode, 'dragend', dragEndEvent);    \
     }                                                          \
     simulateDragDrop(document.evaluate('" +
-    getXpathOfElement(element) +
+    this.browserbot.getXpathOfElement(element) +
     "', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue, document.evaluate('" +
-    getXpathOfElement(target) +
+    this.browserbot.getXpathOfElement(target) +
     "', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue);\
     "
   let win = this.browserbot.getCurrentWindow()

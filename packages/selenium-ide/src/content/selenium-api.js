@@ -1360,6 +1360,31 @@ Selenium.prototype.doType = function(locator, value) {
 
   let element = this.browserbot.findElement(locator)
 
+  let tmp = element;
+
+  while(Array.from(tmp.classList).some(cls => cls.includes("CodeMirror")))
+  {
+      if(Array.from(tmp.classList).some(cls => cls == 'CodeMirror'))
+      {
+        let script =
+        `
+            function changeVal(sourceNode, value){\
+                sourceNode.CodeMirror.setValue(value); \
+            }\
+            changeVal(document.evaluate('${this.browserbot.getXpathOfElement(tmp)}', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue, ${JSON.stringify(value)});\
+        `
+        let win = this.browserbot.getCurrentWindow()
+        let doc = win.document
+        let scriptTag = doc.createElement('script')
+        scriptTag.type = 'text/javascript'
+        scriptTag.text = script
+        doc.body.appendChild(scriptTag)
+        return;
+      }
+
+      tmp = tmp.parentElement;
+  }
+
   core.events.setValue(element, '')
   const type = element.type
   if (type === 'number' || type === 'date') {
