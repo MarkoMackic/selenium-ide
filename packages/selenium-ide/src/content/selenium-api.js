@@ -895,7 +895,7 @@ Selenium.prototype.doDomWait = function() {
   )
 }
 
-Selenium.prototype.doClick = function(locator) {
+Selenium.prototype.doClick = function(locator, vals) {
   /**
    * Clicks on a link, button, checkbox or radio button. If the click action
    * causes a new page to load (like a link usually does), call
@@ -930,8 +930,22 @@ Selenium.prototype.doClick = function(locator) {
     }
   }
 
+  if(vals.contains("no_js_click"))
+  {
+    bot.action.click(element);
+    return;
+  }
 
-  bot.action.click(element)
+  let script =
+      `
+          document.evaluate('${this.browserbot.getXpathOfElement(element)}', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.click();
+      `
+  let win = this.browserbot.getCurrentWindow();
+  let doc = win.document;
+  let scriptTag = doc.createElement('script');
+  scriptTag.type = 'text/javascript';
+  scriptTag.text = script;
+  doc.body.appendChild(scriptTag);
 }
 
 Selenium.prototype.doDoubleClick = function(locator) {
