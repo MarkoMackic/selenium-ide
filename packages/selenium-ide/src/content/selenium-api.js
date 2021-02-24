@@ -930,7 +930,7 @@ Selenium.prototype.doClick = function(locator, vals) {
     }
   }
 
-  if(vals.contains("no_js_click"))
+  if(vals && vals.contains("no_js_click"))
   {
     bot.action.click(element);
     return;
