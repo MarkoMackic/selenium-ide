@@ -299,6 +299,7 @@ export const Commands = [
       type: TargetTypes.LOCATOR,
       description: `Clicks on a target element (e.g., a link, button, checkbox, or radio button).`,
       target: ArgTypes.locator,
+      value: ArgTypes.optionalFlag
     },
   ],
   [
