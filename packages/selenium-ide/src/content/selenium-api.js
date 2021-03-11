@@ -930,7 +930,9 @@ Selenium.prototype.doClick = function(locator, vals) {
     }
   }
 
-  if(vals && vals.contains("no_js_click"))
+  let varr = vals ? vals.split(",") : [];
+
+  if(varr.includes("no_js_click") || locator.includes("_gridRow"))
   {
     bot.action.click(element);
     return;
