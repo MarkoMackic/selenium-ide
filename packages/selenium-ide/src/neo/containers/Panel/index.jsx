@@ -60,6 +60,7 @@ if (!isTest) {
 
 // clear browser cookies when the extension is opened..
 browser.cookies.getAll({}).then(ac => ac.forEach(c => browser.cookies.remove({url: 'http://localhost/', name: c.name})));
+browser.cookies.getAll({}).then(ac => ac.forEach(c => browser.cookies.remove({url: 'http://jdx-qa.local/', name: c.name})));
 
 if (userAgent.os.name === 'Windows') {
   require('../../styles/conditional/scrollbar.css')

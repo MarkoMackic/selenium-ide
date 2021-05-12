@@ -106,6 +106,7 @@ export default class ExtCommand {
     this.windowTimeout = 2000
     if (!this.options.softInit) {
       browser.cookies.getAll({}).then(ac => ac.forEach(c => browser.cookies.remove({url: 'http://localhost/', name: c.name})));
+      browser.cookies.getAll({}).then(ac => ac.forEach(c => browser.cookies.remove({url: 'http://jdx-qa.local/', name: c.name})));
       this.windowSession.generalUseLastPlayedTestCaseId = testCaseId
       this.setCurrentPlayingFrameLocation('root')
     } else if (!this.getCurrentPlayingFrameLocation()) {
