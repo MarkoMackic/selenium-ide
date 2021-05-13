@@ -19,6 +19,15 @@ import migrations from './migrations'
 
 export const VERSIONS = ['1.0', '1.1', '2.0']
 
+import { environment as env } from '../../../../side-utils';
+
+function replaceURL(url)
+{
+  let u = new URL(url);
+  u.host = env.getHost().replace("127.0.0.1", "localhost");
+  return u.toString();
+}
+
 export default function UpgradeProject(project) {
   let r = project
   VERSIONS.forEach(ver => {
@@ -31,6 +40,12 @@ export default function UpgradeProject(project) {
       r.version = ver
     }
   })
+
+  if(r.url)
+    r.url = replaceURL(r.url);
+
+  if(r.urls)
+    r.urls = r.urls.map(replaceURL)
 
   return r
 }

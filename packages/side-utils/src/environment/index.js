@@ -22,7 +22,7 @@ const jdxQACompatible = process.env.JDX_QA_COMPATIBLE === 'true'
 
 
 let gaFeatures = {};
-
+let pHost = "localhost:80";
 
 const setFeatures = function(features)
 {
@@ -35,6 +35,16 @@ const featureAvailable = function(featureName)
     return gaFeatures[featureName] == true;
 }
 
+const setHost = function(host)
+{
+  pHost = host;
+}
+
+const getHost = function()
+{
+  return pHost;
+}
+
 module.exports = {
   isProduction,
   isStaging,
@@ -42,4 +52,6 @@ module.exports = {
   jdxQACompatible,
   setFeatures,
   featureAvailable,
+  getHost,
+  setHost
 }

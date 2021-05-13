@@ -20,7 +20,8 @@ import ReactDOM from 'react-dom'
 import { AppContainer } from 'react-hot-loader'
 import { configure } from 'mobx'
 import Panel from '../Panel'
-import { isJDXQACompatible, getJDXServerURL, setFeatures } from '../../../common/utils'
+import { isJDXQACompatible, getJDXServerURL } from '../../../common/utils'
+import { environment as env } from '../../../../../side-utils'
 
 configure({
   enforceActions: 'observed',
@@ -44,7 +45,10 @@ if (isJDXQACompatible) {
         window.close()
       }
 
-      setFeatures(json.FEATURES || {});
+      env.setFeatures(json.FEATURES || {});
+
+      if(json.HOST)
+        env.setHost(json.HOST);
 
       render(Panel)
     })
