@@ -128,6 +128,7 @@ export const emitters = {
   webdriverChooseCancelOnVisiblePrompt: emitChooseCancelOnNextConfirmation,
   webdriverChooseOkOnVisibleConfirmation: emitChooseOkOnNextConfirmation,
   while: emitControlFlowWhile,
+  waitForDOMToSettle: emitWaitForDOMToSettle
 }
 
 exporter.register.preprocessors(emitters)
@@ -153,6 +154,13 @@ function variableLookup(varName) {
 
 function variableSetter(varName, value) {
   return varName ? `vars.put("${varName}", ${value});` : ''
+}
+
+function emitWaitForDOMToSettle(_, timeout)
+{
+  return Promise.resolve(
+    `com.jedox.qa.engines.testng_web.framework.util.WebDriverUtils.waitForDOMToSettle(driver, ${timeout}, null);`
+  )
 }
 
 function emitWaitForWindow() {

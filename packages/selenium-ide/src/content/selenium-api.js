@@ -277,6 +277,54 @@ Selenium.prototype.doAssertCss = function(locator, value) {
 
 }
 
+Selenium.prototype.doWaitForDOMToSettle = function(_, value)
+{
+
+
+  let win = this.browserbot.getCurrentWindow();
+  let doc = win.document;
+
+  let communicatorElem = doc.createElement("div");
+  communicatorElem.style.display = 'none';
+  communicatorElem.id = 'domsettle_elem';
+  doc.body.appendChild(communicatorElem);
+
+  let script = `
+    (function(){
+      const finalTimeout = Date.now() + ${value} ;
+      const timeout = 200;
+      const communicatorElem = document.getElementById("${communicatorElem.id}");
+      const cfg = { attributes: true, childList: true, subree: true };
+      let tID = null;
+      const tCallback = (observer) => { observer.disconnect(); communicatorElem.dispatchEvent(new CustomEvent('finished')); communicatorElem.remove(); };
+      const callback = (mutations, observer) => {
+        if(tID != null ) clearTimeout(tID);
+        if(Date.now() > finalTime)
+        {
+          tCallback(observer);
+          return;
+        }
+        tID = setTimeout(() => tCallback(observer), timeout);
+      };
+      const observer = new MutationObserver(callback);
+      observer.observe(document.body, cfg);
+      tID = setTimeout(() => tCallback(observer), timeout);
+    })();
+  `;
+
+
+  let scriptTag = doc.createElement('script');
+  scriptTag.type = 'text/javascript';
+  scriptTag.text = script;
+  doc.body.appendChild(scriptTag);
+
+  return new Promise((resolve) => {
+    communicatorElem.addEventListener("finished", function(event){
+      resolve();
+    });
+  });
+}
+
 Selenium.prototype.doEvaluateConditional = function(script) {
   return !!this.eval(script.script, script.argv, true, true)
 }

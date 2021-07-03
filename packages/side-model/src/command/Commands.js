@@ -337,6 +337,14 @@ export const Commands = [
     },
   ],
   [
+  'waitForDOMToSettle',
+    {
+      name: 'wait for dom to settle',
+      description: `Waits until DOM has no modifications for certain period of time`,
+      value: ArgTypes.timeout
+    },
+  ],
+  [
     'close',
     {
       name: 'close',
