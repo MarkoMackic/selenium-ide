@@ -299,7 +299,7 @@ Selenium.prototype.doWaitForDOMToSettle = function(_, value)
       const tCallback = (observer) => { observer.disconnect(); communicatorElem.dispatchEvent(new CustomEvent('finished')); communicatorElem.remove(); };
       const callback = (mutations, observer) => {
         if(tID != null ) clearTimeout(tID);
-        if(Date.now() > finalTime)
+        if(Date.now() > finalTimeout)
         {
           tCallback(observer);
           return;
